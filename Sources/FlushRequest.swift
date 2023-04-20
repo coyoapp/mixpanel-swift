@@ -20,6 +20,7 @@ class FlushRequest: Network {
     var networkConsecutiveFailures = 0
 
     func sendRequest(_ requestData: String,
+                     requestHeaders: [String: String],
                      type: FlushType,
                      useIP: Bool,
                      completion: @escaping (Bool) -> Void) {
@@ -32,12 +33,15 @@ class FlushRequest: Network {
             return nil
         }
         
+        var headers = requestHeaders
+        headers["Content-Type"] = "application/json"
+
         let ipString = useIP ? "1" : "0"
         let resource = Network.buildResource(path: type.rawValue,
                                              method: .post,
                                              requestBody: requestData.data(using: .utf8),
                                              queryItems: [URLQueryItem(name: "ip", value: ipString)],
-                                             headers: ["Content-Type": "application/json"],
+                                             headers: headers,
                                              parse: responseParser)
 
         flushRequestHandler(BasePath.getServerURL(identifier: basePathIdentifier),

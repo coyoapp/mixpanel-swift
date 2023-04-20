@@ -21,6 +21,7 @@ class Flush: AppLifecycle {
     var timer: Timer?
     weak var delegate: FlushDelegate?
     var useIPAddressForGeoLocation = true
+    var requestHeaders: [String: String] = [:]
     var flushRequest: FlushRequest
     var flushOnBackground = true
     var _flushInterval = 0.0
@@ -107,6 +108,7 @@ class Flush: AppLifecycle {
                     }
                 #endif // os(iOS)
                 flushRequest.sendRequest(requestData,
+                                         requestHeaders: requestHeaders,
                                          type: type,
                                          useIP: useIPAddressForGeoLocation,
                                          completion: { [weak self, semaphore] success in

@@ -118,6 +118,18 @@ open class MixpanelInstance: CustomDebugStringConvertible, FlushDelegate, AEDele
             flushInstance.useIPAddressForGeoLocation = newValue
         }
     }
+
+    /// This allows sends the headers via Mixpanel request apis
+    /// - Note: Mixpanel server no needs extra headers we are using this headers for our proxy server
+    /// Defaults to empty.
+    open var requestHeaders: [String: String] {
+        get {
+            return flushInstance.requestHeaders
+        }
+        set {
+            flushInstance.requestHeaders = newValue
+        }
+    }
     
     /// The base URL used for Mixpanel API requests.
     /// Useful if you need to proxy Mixpanel requests. Defaults to
