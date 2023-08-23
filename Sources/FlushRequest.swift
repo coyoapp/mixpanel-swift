@@ -22,8 +22,7 @@ class FlushRequest: Network {
     func sendRequest(_ requestData: String,
                      requestHeaders: [String: String],
                      type: FlushType,
-                     useIP: Bool,
-                     completion: @escaping (Bool) -> Void) {
+                     useIP: Bool) -> Bool {
 
         let responseParser: (Data) -> Int? = { data in
             let response = String(data: data, encoding: String.Encoding.utf8)
@@ -43,13 +42,18 @@ class FlushRequest: Network {
                                              queryItems: [URLQueryItem(name: "ip", value: ipString)],
                                              headers: headers,
                                              parse: responseParser)
-
+        var result = false
+        let semaphore = DispatchSemaphore(value: 0)
         flushRequestHandler(BasePath.getServerURL(identifier: basePathIdentifier),
                             resource: resource,
                             completion: { success in
-                                completion(success)
+                                result = success
+                                semaphore.signal()
         })
+        _ = semaphore.wait(timeout: .now() + 120.0)
+        return result
     }
+
 
     private func flushRequestHandler(_ base: String,
                                      resource: Resource<Int>,
